@@ -12,14 +12,36 @@ namespace MyFirstApi.Controllers
     [ApiController]
     public class PizzasController : ControllerBase
     {
-        [HttpGet]
-        public List<Pizza> GetAllPizzas()
+        List<Pizza> _pizzas;
+
+        public PizzasController()
         {
             var pizza = new Pizza { Id = 1, Size = "Medium", Toppings = new List<string> { "Pepperoni" } };
             var pizza1 = new Pizza { Id = 2, Size = "Medium", Toppings = new List<string> { "Sausage" } };
             var pizza2 = new Pizza { Id = 3, Size = "Medium", Toppings = new List<string> { "Bacon" } };
 
-            return new List<Pizza> {pizza, pizza1, pizza2 };
+            _pizzas = new List<Pizza> { pizza, pizza1, pizza2 };
+        }
+
+        [HttpGet]
+        public List<Pizza> GetAllPizzas()
+        {
+            return _pizzas;
+        }
+
+        //api/pizzas/{id}
+        //api/pizzas/2
+        [HttpGet("{id}")]
+        public IActionResult GetPizzaById(int id)
+        {
+            var result = _pizzas.SingleOrDefault(pizza => pizza.Id == id);
+
+            if (result == null)
+            {
+                return NotFound($"Could not find a pizza with the id {id}");
+            }
+
+            return Ok(result);
         }
     }
 }
